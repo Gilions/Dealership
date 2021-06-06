@@ -9,14 +9,15 @@
   {% load static %}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
 </head>
-<body >
-{% csrf_token %}
-{% block header %}
-{% endblock %}
+<body>
+  {% include 'base/header.html' %}
+  <main>
+      <div class="container">
+          {% block content %}
 
-{% block content %}
-
-{% endblock content %}
+          {% endblock %}
+      </div>
+  </main>
 
 {% block style %}
   <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
@@ -24,5 +25,3 @@
 {% endblock style %}
 </body>
 </html>
-{% block footer %}
-{% endblock %}

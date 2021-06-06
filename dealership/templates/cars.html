@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+{% block title %}Автомобили{% endblock %}
+{% block content %}
+<h1>{{ dealer.title }} - Перечень автомобилей</h1>
+{% include "base/nav_bar.html" %}
+<br>
+<a href="{% url 'cars_create' dealer.id %}"><button type="button" class="btn btn-outline-success">Добавить запись</button></a>
+<br>
+<br>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Марка</th>
+        <th scope="col">Модель</th>
+        <th scope="col">Цвет</th>
+        <th scope="col">VIN номер</th>
+        <th scope="col">Дата поступления</th>
+        <th scope="col">Цена</th>
+      </tr>
+    </thead>
+    {% for car in cars %}
+    <tbody>
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td><a href="{% url 'transaction_create' car.id %}">{{ car.brand }}</a></td>
+        <td>{{ car.model }}</td>
+        <td>{{ car.color }}</td>
+        <td>{{ car.vin }}</td>
+        <td>{{ car.pub_date }}</td>
+        <td>{{ car.cost }} руб.</td>
+      </tr>
+    </tbody>
+  {% endfor %}
+  </table>
+{% endblock %}

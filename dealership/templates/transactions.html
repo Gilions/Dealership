@@ -1,0 +1,43 @@
+{% extends "base/base.html" %}
+{% block title %}Продажи{% endblock %}
+{% block content %}
+<h1>{{ dealer.title }} - Перечень транзакций</h1>
+{% include "base/nav_bar.html" %}
+<br><br><br>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Марка</th>
+        <th scope="col">Модель</th>
+        <th scope="col">Цвет</th>
+        <th scope="col">VIN номер</th>
+        <th scope="col">Дата продажи</th>
+        <th scope="col">Покупатель</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">Прибыль</th>
+      </tr>
+    </thead>
+    {% for sale in sales %}
+    <tbody>
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ sale.brand }}</td>
+        <td>{{ sale.model }}</td>
+        <td>{{ sale.color }}</td>
+        <td>{{ sale.vin }}</td>
+        <td>{{ sale.pub_date }}</td>
+        <td>{{ sale.buyer }}</td>
+        <td>{{ sale.phone }}</td>
+        <td>
+        {% if  sale.profit > 0 %}
+            <span style="color: rgb(3, 112, 8)">{{ sale.profit }}</span>
+        {% else %}
+            <span style="color: rgb(204, 12, 12)">{{ sale.profit }}</span>
+        {% endif %}
+      </td>
+      </tr>
+    </tbody>
+  {% endfor %}
+  </table>
+{% endblock %}

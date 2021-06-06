@@ -1,0 +1,16 @@
+<ul class="nav nav-tabs">
+  {% with request.resolver_match.url_name as url_name %}
+    <li class="nav-item">
+      <a class="nav-link {% if 'get_transactions' in url_name %}active{% endif %}" aria-current="page" href="{% url 'get_transactions' dealer.id %}">Транзакции</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if 'dealership_components' in url_name %}active{% endif %}" href="{% url 'dealership_components' dealer.id %}">Комплектующие</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if 'dealership_cars' in url_name %}active{% endif %}" href="{% url 'dealership_cars' dealer.id %}">Склад автомобилей</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if 'get_support' in url_name %}active{% endif %}" href="{% url 'get_support' dealer.id %}">Сервисный центр</a>
+      </li>
+  {% endwith %}
+  </ul>

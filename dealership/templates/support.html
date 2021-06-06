@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% block title %}Продажи{% endblock %}
+{% block content %}
+<h1>{{ dealer.title }} - Сервисный центр</h1>
+{% include "base/nav_bar.html" %}
+<br>
+<a href="{% url 'new_support' dealer.id %}"><button type="button" class="btn btn-outline-success">Добавить автомобиль</button></a>
+<br>
+<br>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Марка</th>
+        <th scope="col">Модель</th>
+        <th scope="col">Цвет</th>
+        <th scope="col">VIN номер</th>
+        <th scope="col">Поступления</th>
+        <th scope="col">Описание</th>
+        <th scope="col">Отгрузка</th>
+        <th scope="col">Заключение</th>
+        <th scope="col">Стоимость ремонта</th>
+        <th scope="col">Статус</th>
+      </tr>
+    </thead>
+    {% for sup in support %}
+    <tbody>
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td><a href="{% url 'shipment_car' sup.id %}">{{ sup.brand }}</a></td>
+        <td>{{ sup.model }}</td>
+        <td>{{ sup.color }}</td>
+        <td>{{ sup.vin }}</td>
+        <td>{{ sup.pub_date }}</td>
+        <td>{{ sup.discription }}</td>
+        <td>{{ sup.shipment }}</td>
+        <td>{{ sup.conclusion }}</td>
+        <td>{{ sup.price }} руб.</td>
+        <td>
+          {% if sup.status_verbose == "Принят" %}
+            <span style="color: rgb(204, 12, 12)">{{ sup.status_verbose }}</span>
+          {% else %}
+            <span style="color: rgb(3, 112, 8)">{{ sup.status_verbose }}</span>
+          {% endif %}
+          </td>
+      </tr>
+    </tbody>
+  {% endfor %}
+  </table>
+{% endblock %}

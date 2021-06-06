@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+{% block title %}Новая запись{% endblock %}
+
+{% block content %}
+{% load user_filters %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 p-5">
+            <div class="card">
+
+                {% if support %}
+                    <div class="card-header">Прием автомобиля в ремонт</div>
+                {% endif %}
+                {% if shipment %}
+                    <div class="card-header">Заключение</div>
+                {% endif %}
+                {% if component %}
+                    <div class="card-header">Добавление комплектующих</div>
+                {% endif %}
+                {% if car %}
+                    <div class="card-header">Добавление нового автомобиля</div>
+                {% endif %}
+                {% if sale %}
+                    <div class="card-header">Продажа автомобиля</div>
+                {% endif %}
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group row">
+                            <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ field.label }}</label>
+                            <div class="col-md-6">
+                                {{ field | addclass:"form-control" }}
+                                {% if field.help_text %}
+                                <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="col-md-6 offset-md-4">
+                            {% if sale %}
+                                <button type="submit" class="btn btn-primary">Продать</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-primary">Создать</button>
+                            {% endif %}
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

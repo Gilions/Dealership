@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+{% block title %}Комплектующие{% endblock %}
+{% block content %}
+<h1>{{ dealer.title }} - Перечень комплектующих</h1>
+{% include "base/nav_bar.html" %}
+<br>
+<a href="{% url 'component_create' dealer.id %}"><button type="button" class="btn btn-outline-success">Добавить запись</button></a>
+<br>
+<br>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Название</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Единица измерения</th>
+      </tr>
+    </thead>
+    {% for component in components %}
+    <tbody>
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ component.title }}</td>
+        <td>{{ component.quantity }}</td>
+        <td>{{ component.unit }}</td>
+      </tr>
+    </tbody>
+  {% endfor %}
+  </table>
+{% endblock %}

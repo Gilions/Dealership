@@ -1,12 +1,39 @@
 {% extends "base/base.html" %}
 
 {% block title %}Дилер{% endblock %}
-{% block header %}
-  {% include "base/header.html" %}
-{% endblock %}
 
 {% block content %}
+<h1>Дилер - {{ dealer.title }}</h1>
+<br>
+<a href="{% url 'create_dealership' %}"><button type="button" class="btn btn-outline-success">Добавить дилерский центр</button></a>
+<br>
+<br>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Дилерский центр</th>
+      <th scope="col">Расположение</th>
+      <th scope="col">Баланс</th>
+    </tr>
+  </thead>
+{% for dealer in dealership %}
+
+  <tbody>
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td><a href="{% url 'get_transactions' dealer.id %}">{{ dealer.title }}</a></td>
+      <td>{{ dealer.place }}</td>
+      <td>
+        {% if  dealer.profit > 0 %}
+            <span style="color: rgb(3, 112, 8)">{{ dealer.profit }}</span>
+        {% else %}
+            <span style="color: rgb(204, 12, 12)">{{ dealer.profit }}</span>
+        {% endif %}
+      </td>
+    </tr>
+  </tbody>
+{% endfor %}
+</table>
+
 {% endblock content %}
-{% block footer %}
-{% include "base/footer.html" %}
-{% endblock %}
