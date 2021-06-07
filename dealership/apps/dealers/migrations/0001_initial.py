@@ -18,9 +18,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Dealer',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(db_index=True, help_text='Максимальная длина 255 символов', max_length=255, unique=True, verbose_name='Название дилера')),
-                ('author', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Руководитель')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('title', models.CharField(
+                    db_index=True,
+                    help_text='Максимальная длина 255 символов',
+                    max_length=255,
+                    unique=True,
+                    verbose_name='Название дилера')),
+                ('author', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL,
+                    verbose_name='Руководитель')),
             ],
             options={
                 'verbose_name_plural': 'Дилер',
@@ -29,12 +41,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Dealership',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(db_index=True, help_text='Максимальная длина 255 символов', max_length=255, unique=True, verbose_name='Дилерский центр')),
-                ('place', models.CharField(blank=True, max_length=100, null=True, verbose_name='Расположен')),
-                ('profit', models.IntegerField(default=0, verbose_name='Прибыль')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='author_dealerships', to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
-                ('dealer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dealership', to='dealers.dealer', verbose_name='Дилер')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('title', models.CharField(
+                    db_index=True,
+                    help_text='Максимальная длина 255 символов',
+                    max_length=255,
+                    unique=True,
+                    verbose_name='Дилерский центр')),
+                ('place', models.CharField(
+                    blank=True,
+                    max_length=100,
+                    null=True,
+                    verbose_name='Расположен')),
+                ('profit', models.IntegerField(
+                    default=0,
+                    verbose_name='Прибыль')),
+                ('author', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='author_dealerships',
+                    to=settings.AUTH_USER_MODEL,
+                    verbose_name='Автор')),
+                ('dealer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='dealership',
+                    to='dealers.dealer',
+                    verbose_name='Дилер')),
             ],
             options={
                 'verbose_name_plural': 'Диллерские центры',
@@ -43,19 +78,61 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Support',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('brand', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Марка')),
-                ('model', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Модель автомобиля')),
-                ('color', models.CharField(help_text='Максимальная длина 25 символов', max_length=25, verbose_name='Цвет автомобиля')),
-                ('vin', models.CharField(db_index=True, help_text='Поле уникальное, максимальная длина 100 символов', max_length=100, unique=True, verbose_name='VIN номер')),
-                ('pub_date', models.DateTimeField(auto_now_add=True, help_text='Дата продажи заполняется автоматически', verbose_name='Дата продажи')),
-                ('discription', models.TextField(help_text='Подробное описание дефекта', verbose_name='Описание')),
-                ('shipment', models.DateTimeField(blank=True, null=True, verbose_name='Дата отгрузки')),
-                ('conclusion', models.TextField(blank=True, help_text='Подробное описание выполненных работ', verbose_name='Заключение мастера')),
-                ('price', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Стоимость ремонта')),
-                ('status', models.CharField(choices=[('PROCESSING', 'Принят'), ('SHIPPED', 'Отгружен')], max_length=20, verbose_name='Статус')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='author_supported', to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
-                ('dealership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='supported', to='dealers.dealership', verbose_name='Дилерский центр')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('brand', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100,
+                    verbose_name='Марка')),
+                ('model', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100,
+                    verbose_name='Модель автомобиля')),
+                ('color', models.CharField(
+                    help_text='Максимальная длина 25 символов',
+                    max_length=25,
+                    verbose_name='Цвет автомобиля')),
+                ('vin', models.CharField(
+                    db_index=True,
+                    help_text='Поле уникальное,'
+                    'максимальная длина 100 символов',
+                    max_length=100,
+                    unique=True,
+                    verbose_name='VIN номер')),
+                ('pub_date', models.DateTimeField(
+                    auto_now_add=True,
+                    help_text='Дата продажи заполняется автоматически',
+                    verbose_name='Дата продажи')),
+                ('discription', models.TextField(
+                    help_text='Подробное описание дефекта',
+                    verbose_name='Описание')),
+                ('shipment', models.DateTimeField(
+                    blank=True,
+                    null=True,
+                    verbose_name='Дата отгрузки')),
+                ('conclusion', models.TextField(
+                    blank=True,
+                    help_text='Подробное описание выполненных работ',
+                    verbose_name='Заключение мастера')),
+                ('price', models.IntegerField(
+                    default=0,
+                    validators=[django.core.validators.MinValueValidator(0)],
+                    verbose_name='Стоимость ремонта')),
+                ('status', models.CharField(
+                    choices=[
+                        ('PROCESSING', 'Принят'), ('SHIPPED', 'Отгружен')],
+                    max_length=20, verbose_name='Статус')),
+                ('author', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='author_supported',
+                    to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
+                ('dealership', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='supported', to='dealers.dealership',
+                    verbose_name='Дилерский центр')),
             ],
             options={
                 'verbose_name_plural': 'Ремонт автомобилей',
@@ -65,17 +142,50 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Sale',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('brand', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Марка')),
-                ('model', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Модель автомобиля')),
-                ('color', models.CharField(help_text='Максимальная длина 25 символов', max_length=25, verbose_name='Цвет автомобиля')),
-                ('vin', models.CharField(db_index=True, help_text='Поле уникальное, максимальная длина 100 символов', max_length=100, unique=True, verbose_name='VIN номер')),
-                ('pub_date', models.DateTimeField(auto_now_add=True, help_text='Дата продажи заполняется автоматически', verbose_name='Дата продажи')),
-                ('profit', models.IntegerField(verbose_name='Чистая прибыль')),
-                ('buyer', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Покупатель')),
-                ('phone', models.CharField(blank=True, help_text='Максимальная длина 20 символов', max_length=20, verbose_name='Номер телефона')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='author_sales', to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
-                ('dealership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sales', to='dealers.dealership', verbose_name='Дилерский центр')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('brand', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100, verbose_name='Марка')),
+                ('model', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100,
+                    verbose_name='Модель автомобиля')),
+                ('color', models.CharField(
+                    help_text='Максимальная длина 25 символов',
+                    max_length=25,
+                    verbose_name='Цвет автомобиля')),
+                ('vin', models.CharField(
+                    db_index=True,
+                    help_text='Поле уникальное, максимальная'
+                    'длина 100 символов',
+                    max_length=100, unique=True, verbose_name='VIN номер')),
+                ('pub_date', models.DateTimeField(
+                    auto_now_add=True,
+                    help_text='Дата продажи заполняется автоматически',
+                    verbose_name='Дата продажи')),
+                ('profit', models.IntegerField(
+                    verbose_name='Чистая прибыль')),
+                ('buyer', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100, verbose_name='Покупатель')),
+                ('phone', models.CharField(
+                    blank=True,
+                    help_text='Максимальная длина 20 символов',
+                    max_length=20, verbose_name='Номер телефона')),
+                ('author', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='author_sales',
+                    to=settings.AUTH_USER_MODEL,
+                    verbose_name='Автор')),
+                ('dealership', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='sales',
+                    to='dealers.dealership',
+                    verbose_name='Дилерский центр')),
             ],
             options={
                 'verbose_name_plural': 'Продажи',
@@ -85,12 +195,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Component',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(db_index=True, help_text='Название детали, максимальная длина 250 символов', max_length=250, verbose_name='Название')),
-                ('quantity', models.PositiveSmallIntegerField(help_text='Не может быть отрицательным', validators=[django.core.validators.MinValueValidator(0)], verbose_name='Количество')),
-                ('unit', models.CharField(help_text='Единица измерения, максимум 20 симоволов', max_length=20, verbose_name='Единица измерения')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='author_components', to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
-                ('dealership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='components', to='dealers.dealership', verbose_name='Дилерский центр')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('title', models.CharField(
+                    db_index=True,
+                    help_text='Название детали, максимальная'
+                    'длина 250 символов',
+                    max_length=250,
+                    verbose_name='Название')),
+                ('quantity', models.PositiveSmallIntegerField(
+                    help_text='Не может быть отрицательным',
+                    validators=[
+                        django.core.validators.MinValueValidator(0)],
+                    verbose_name='Количество')),
+                ('unit', models.CharField(
+                    help_text='Единица измерения, максимум 20 симоволов',
+                    max_length=20, verbose_name='Единица измерения')),
+                ('author', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='author_components',
+                    to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
+                ('dealership', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='components',
+                    to='dealers.dealership',
+                    verbose_name='Дилерский центр')),
             ],
             options={
                 'verbose_name_plural': 'Детали',
@@ -99,17 +231,55 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Car',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('brand', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Марка')),
-                ('model', models.CharField(help_text='Максимальная длина 100 символов', max_length=100, verbose_name='Модель автомобиля')),
-                ('color', models.CharField(help_text='Максимальная длина 25 символов', max_length=25, verbose_name='Цвет автомобиля')),
-                ('vin', models.CharField(db_index=True, help_text='Поле уникальное, максимальная длина 100 символов', max_length=100, unique=True, verbose_name='VIN номер')),
-                ('pub_date', models.DateTimeField(auto_now_add=True, help_text='Дата поступления заполняется автоматически', verbose_name='Дата поступления')),
-                ('price', models.IntegerField(validators=[django.core.validators.MinValueValidator(0)], verbose_name='Стоимость без наценки')),
-                ('markup', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Наценка в %')),
-                ('cost', models.IntegerField(blank=True, verbose_name='Цена')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='author_cars', to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
-                ('dealership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cars', to='dealers.dealership', verbose_name='Дилерский центр')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('brand', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100,
+                    verbose_name='Марка')),
+                ('model', models.CharField(
+                    help_text='Максимальная длина 100 символов',
+                    max_length=100,
+                    verbose_name='Модель автомобиля')),
+                ('color', models.CharField(
+                    help_text='Максимальная длина 25 символов',
+                    max_length=25,
+                    verbose_name='Цвет автомобиля')),
+                ('vin', models.CharField(
+                    db_index=True,
+                    help_text='Поле уникальное, максимальная'
+                    'длина 100 символов',
+                    max_length=100,
+                    unique=True,
+                    verbose_name='VIN номер')),
+                ('pub_date', models.DateTimeField(
+                    auto_now_add=True,
+                    help_text='Дата поступления заполняется'
+                    'автоматически',
+                    verbose_name='Дата поступления')),
+                ('price', models.IntegerField(
+                    validators=[
+                        django.core.validators.MinValueValidator(0)],
+                    verbose_name='Стоимость без наценки')),
+                ('markup', models.PositiveSmallIntegerField(
+                    default=0,
+                    validators=[django.core.validators.MinValueValidator(0)],
+                    verbose_name='Наценка в %')),
+                ('cost', models.IntegerField(
+                    blank=True,
+                    verbose_name='Цена')),
+                ('author', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='author_cars',
+                    to=settings.AUTH_USER_MODEL,
+                    verbose_name='Автор')),
+                ('dealership', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='cars', to='dealers.dealership',
+                    verbose_name='Дилерский центр')),
             ],
             options={
                 'verbose_name_plural': 'Атомобили',

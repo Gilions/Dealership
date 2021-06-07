@@ -4,8 +4,9 @@ from django.db import models
 
 User = get_user_model()
 
+
 class Dealer(models.Model):
-    title =  models.CharField(
+    title = models.CharField(
         db_index=True,
         max_length=255,
         unique=True,
@@ -52,6 +53,7 @@ class Dealership(models.Model):
         default=0,
         verbose_name='Прибыль'
     )
+
     class Meta:
         verbose_name_plural = "Диллерские центры"
 

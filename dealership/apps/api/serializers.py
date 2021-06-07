@@ -5,12 +5,14 @@ from ..dealers.models import Car, Component, Dealer, Dealership, Sale, Support
 
 class DealerSerializer(serializers.ModelSerializer):
     author = serializers.SlugField('author_username')
+
     class Meta:
         model = Dealer
         fields = "__all__"
 
 
 class DealershipSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Dealership
         fields = ("id", "title", "place", "profit")
@@ -18,6 +20,7 @@ class DealershipSerializer(serializers.ModelSerializer):
 
 class CarSerializer(serializers.ModelSerializer):
     dealership = serializers.SlugField('dealership_title')
+
     class Meta:
         model = Car
         exclude = ("author",)
@@ -25,6 +28,7 @@ class CarSerializer(serializers.ModelSerializer):
 
 class ComponentSerializer(serializers.ModelSerializer):
     dealership = serializers.SlugField('dealership_title')
+
     class Meta:
         model = Component
         exclude = ("author",)
@@ -32,6 +36,7 @@ class ComponentSerializer(serializers.ModelSerializer):
 
 class SupportSerializer(serializers.ModelSerializer):
     dealership = serializers.SlugField('dealership_title')
+
     class Meta:
         model = Support
         exclude = ("author",)
@@ -39,6 +44,7 @@ class SupportSerializer(serializers.ModelSerializer):
 
 class TransactionsSerializer(serializers.ModelSerializer):
     dealership = serializers.SlugField('dealership_title')
+
     class Meta:
         model = Sale
         exclude = ("author",)

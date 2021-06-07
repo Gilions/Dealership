@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.generics import get_object_or_404
 
 from ..dealers.models import Dealer, Dealership
@@ -8,11 +8,22 @@ from .serializers import (CarSerializer, ComponentSerializer, DealerSerializer,
                           TransactionsSerializer)
 
 
-class DealerViewSet(viewsets.ModelViewSet):
+class CustomViewset(
+        mixins.UpdateModelMixin,
+        mixins.DestroyModelMixin,
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet):
+    """
+    Исключены retrive, create методы
+    """
+    pass
+
+
+class DealerViewSet(CustomViewset):
     """
     Таблица: Dealer
     Допустимые методы:
-    GET, POST, PUT, PATCH, DELETE
+    GET, PUT, PATCH, DELETE
     """
     serializer_class = DealerSerializer
     permission_classes = (CustomPermission,)
@@ -37,11 +48,11 @@ class DealershipViewSet(viewsets.ModelViewSet):
     permission_classes = (CustomPermission,)
 
     def get_queryset(self):
-            dealer = get_object_or_404(
-                Dealer,
-                author=self.request.user
-            )
-            return dealer.dealership.all()
+        dealer = get_object_or_404(
+            Dealer,
+            author=self.request.user
+        )
+        return dealer.dealership.all()
 
 
 class CarViewSet(viewsets.ModelViewSet):
