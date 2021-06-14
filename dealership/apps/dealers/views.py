@@ -1,247 +1,274 @@
 import datetime
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import CreateView, ListView
+from django.views.generic.edit import UpdateView
 
 from .forms import (CarsForm, ComponentForm, DealershipForm, DelearForm,
                     SupportAddNewForm, SupportShipmentForm, TransactionForm)
-from .models import Car, Dealer, Dealership, Support
+from .models import Car, Component, Dealer, Dealership, Sale, Support
 
 
-@login_required
-def index(request):
-    # Главная страница сайта
-    check = Dealer.objects.filter(author=request.user).exists()
-    if check:
-        dealer = get_object_or_404(Dealer, author=request.user)
-        dealership = dealer.dealership.all()
-        context = {
-            "dealer": dealer,
-            "dealership": dealership
-        }
-        return render(request, 'index.html', context)
-    return redirect("new_dealer")
+class IndexView(LoginRequiredMixin, ListView):
+    model = Dealer
+    template_name = "index.html"
+    context_object_name = "dealership"
 
+    def get(self, request, *args, **kwargs):
+        check = Dealer.objects.filter(author=self.request.user).exists()
+        if check:
+            return super().get(request, *args, **kwargs)
+        return redirect("new_dealer")
 
-@login_required
-def get_component(request, id):
-    # Склад запасных частей
-    dealer = get_object_or_404(
-        Dealership,
-        id=id
-    )
-    components = dealer.components.all()
-    context = {
-        "dealer": dealer,
-        "components": components,
-    }
-    return render(request, "components.html", context)
-
-
-@login_required
-def get_transactions(request, id):
-    # Страница транзакций
-    dealer = get_object_or_404(
-        Dealership,
-        id=id
-    )
-    sales = dealer.sales.all()
-    context = {
-        "sales": sales,
-        "dealer": dealer
-    }
-    return render(request, "transactions.html", context)
-
-
-@login_required
-def get_cars(request, id):
-    # Склад автомобилей
-    dealer = get_object_or_404(
-        Dealership,
-        id=id
-    )
-    cars = dealer.cars.all()
-    context = {
-        "dealer": dealer,
-        "cars": cars,
-    }
-    return render(request, "cars.html", context)
-
-
-@login_required
-def get_support(request, id):
-    # Страница сервисного центра
-    dealer = get_object_or_404(
-        Dealership,
-        id=id
-    )
-    support = dealer.supported.all()
-    context = {
-        "dealer": dealer,
-        "support": support,
-    }
-    return render(request, "support.html", context)
-
-
-@login_required
-def new_cars(request, id):
-    # Записываем новую машину
-    form = CarsForm(request.POST, files=request.FILES or None)
-    if form.is_valid():
-        new_car = form.save(commit=False)
-        new_car.dealership = get_object_or_404(
-            Dealership,
-            id=id
-        )
-        new_car.author = request.user
-        new_car.save()
-        return redirect("dealership_cars", id=id)
-    context = {
-        "form": form,
-        "car": True
-        }
-    return render(request, "form_item.html", context)
-
-
-@login_required
-def new_component(request, id):
-    # Записываем новые детали
-    component = True
-    form = ComponentForm(request.POST, files=request.FILES or None)
-    if form.is_valid():
-        new_component = form.save(commit=False)
-        new_component.dealership = get_object_or_404(
-            Dealership,
-            id=id
-        )
-        new_component.author = request.user
-        new_component.save()
-        return redirect("dealership_components", id=id)
-
-    context = {
-        "component": component,
-        "form": form
-
-    }
-    return render(request, "form_item.html", context)
-
-
-@login_required
-def new_dealer(request):
-    # Создаем нового дилера
-    # Проверяем наличие дилера, дилер может быть только один
-    check = Dealer.objects.filter(author=request.user).exists()
-    if check:
-        return redirect("index")
-
-    form = DelearForm(request.POST, files=request.FILES or None)
-    if form.is_valid():
-        new_dealer = form.save(commit=False)
-        new_dealer.author = request.user
-        new_dealer.save()
-        return redirect("index")
-    context = {
-        "form": form
-    }
-    return render(request, "form_dealer.html", context)
-
-
-@login_required
-def new_dealership(request):
-    # Создаем дилерские центры
-    form = DealershipForm(request.POST, files=request.FILES or None)
-    if form.is_valid():
-        new_dealer_center = form.save(commit=False)
-        new_dealer_center.dealer = get_object_or_404(
+    def get_queryset(self):
+        dealer = get_object_or_404(
             Dealer,
-            author=request.user
+            author=self.request.user
         )
-        new_dealer_center.author = request.user
-        new_dealer_center.save()
+        return dealer.dealership.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dealer = get_object_or_404(
+            Dealer,
+            author=self.request.user
+        )
+        context["dealer"] = dealer
+        return context
+
+
+class ComponentView(LoginRequiredMixin, ListView):
+    model = Component
+    template_name = "components.html"
+    context_object_name = "components"
+
+    def get_queryset(self):
+        dealership = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        return dealership.components.all()
+
+    def get_context_data(self, **kwargs,):
+        context = super().get_context_data(**kwargs)
+        context["dealer"] = get_object_or_404(
+            Dealership, id=self.kwargs.get("id"))
+        return context
+
+
+class TransactionsView(LoginRequiredMixin, ListView):
+    model = Sale
+    template_name = "transactions.html"
+    context_object_name = "sales"
+
+    def get_queryset(self):
+        dealership = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        return dealership.sales.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dealer = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        context["dealer"] = dealer
+        return context
+
+
+class CarsView(LoginRequiredMixin, ListView):
+    model = Car
+    template_name = "cars.html"
+    context_object_name = "cars"
+
+    def get_queryset(self):
+        dealership = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        return dealership.cars.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dealer = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        context["dealer"] = dealer
+        return context
+
+
+class SupportView(LoginRequiredMixin, ListView):
+    model = Support
+    template_name = "support.html"
+    context_object_name = "support"
+
+    def get_queryset(self):
+        dealership = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        return dealership.supported.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dealer = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        context["dealer"] = dealer
+        return context
+
+
+class CreateCarView(LoginRequiredMixin, CreateView):
+    model = Car
+    form_class = CarsForm
+    template_name = "form_item.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["car"] = True
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.dealership = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        form.save()
+        return redirect("dealership_cars", id=self.kwargs.get("id"))
+
+
+class CreateComponentView(LoginRequiredMixin, CreateView):
+    model = Component
+    form_class = ComponentForm
+    template_name = "form_item.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["component"] = True
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.dealership = get_object_or_404(
+            Dealership,
+            id=self.kwargs.get("id")
+        )
+        form.save()
+        return redirect("dealership_components", id=self.kwargs.get("id"))
+
+
+class CreateDealerView(LoginRequiredMixin, CreateView):
+    model = Dealer
+    form_class = DelearForm
+    template_name = "form_dealer.html"
+
+    def get(self, request, *args, **kwargs):
+        check = Dealer.objects.filter(author=self.request.user).exists()
+        if check:
+            return redirect("index")
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.save()
         return redirect("index")
-    context = {
-        "new_dealership": True,
-        "form": form
-    }
-    return render(request, "form_dealer.html", context)
 
 
-@login_required
-def new_transaction(request, id):
-    # Производим запись в таблицу транзакций
-    form = TransactionForm()
-    if request.method == "POST":
-        form = TransactionForm(request.POST, files=request.FILES or None)
-        if form.is_valid():
-            car = get_object_or_404(Car, id=id)
-            new_sale = form.save(commit=False)
-            new_sale.dealership = car.dealership
-            new_sale.brand = car.brand
-            new_sale.model = car.model
-            new_sale.color = car.color
-            new_sale.vin = car.vin
-            new_sale.profit = car.cost - car.price
-            new_sale.author = request.user
-            new_sale.save()
+class CreateDealershipView(LoginRequiredMixin, CreateView):
+    model = Dealership
+    form_class = DealershipForm
+    template_name = "form_dealer.html"
 
-            # Фиксируем прибыль дилера
-            dealership = car.dealership
-            dealership.profit += car.cost - car.price
-            dealership.save()
-            # Убираем проданный автомобиль
-            car.delete()
-            return redirect("get_transactions", id=dealership.id)
-    context = {
-        "form": form,
-        "sale": True
-    }
-    return render(request, "form_item.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["new_dealership"] = True
+        return context
 
-
-@login_required
-def new_support(request, id):
-    # Новая запись в таблицу Sale
-    form = SupportAddNewForm(request.POST, files=request.FILES or None)
-    if form.is_valid():
-        new_support = form.save(commit=False)
-        new_support.dealership = get_object_or_404(
-                Dealership,
-                id=id
-            )
-        new_support.author = request.user
-        new_support.save()
-        return redirect("get_support", id=id)
-    context = {
-        "form": form,
-        "support": True
-    }
-    return render(request, "form_item.html", context)
-
-
-@login_required
-def shipment_car(request, id):
-    # Дополняем таблицу Sale комментариями мастера
-    car = get_object_or_404(
-            Support,
-            id=id
+    def form_valid(self, form):
+        form.instance.dealer = get_object_or_404(
+            Dealer,
+            author=self.request.user
         )
-    form = SupportShipmentForm()
-    if request.method == "POST":
-        form = SupportShipmentForm(
-            request.POST,
-            files=request.FILES or None, instance=car)
-        if form.is_valid():
-            shipment = form.save(commit=False)
-            shipment.shipment = datetime.datetime.now()
-            shipment.save()
+        form.instance.author = self.request.user
+        form.save()
+        return redirect("index")
 
-            # Фиксируем прибыль
-            dealership = car.dealership
-            dealership.profit += shipment.price
-            dealership.save()
-            return redirect("get_support", id=dealership.id)
-    context = {
-        "form": form,
-        "shipment": True
-    }
-    return render(request, "form_item.html", context)
+
+class CreateTransactionView(LoginRequiredMixin, CreateView):
+    model = Sale
+    form_class = TransactionForm
+    template_name = "form_item.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["sale"] = True
+        return context
+
+    def form_valid(self, form):
+        car = get_object_or_404(Car, id=self.kwargs.get("id"))
+        form.instance.dealership = car.dealership
+        form.instance.brand = car.brand
+        form.instance.model = car.model
+        form.instance.color = car.color
+        form.instance.vin = car.vin
+        form.instance.profit = car.cost - car.price
+        form.instance.author = self.request.user
+        form.save()
+
+        dealership = car.dealership
+        dealership.profit = car.cost - car.price
+        dealership.save()
+        car.delete()
+        return redirect("get_transactions", id=dealership.id)
+
+
+class CreateSupportView(LoginRequiredMixin, CreateView):
+    model = Support
+    form_class = SupportAddNewForm
+    template_name = "form_item.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["support"] = True
+        return context
+
+    def form_valid(self, form):
+        dealership = get_object_or_404(Dealership, id=self.kwargs.get("id"))
+        form.instance.dealership = dealership
+        form.instance.author = self.request.user
+        form.save()
+        return redirect("get_support", id=self.kwargs.get("id"))
+
+
+class CreateShipmentView(LoginRequiredMixin, UpdateView):
+    model = Support
+    form_class = SupportShipmentForm
+    template_name = "form_item.html"
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Support, id=id_)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["shipment"] = True
+        return context
+
+    def form_valid(self, form):
+        form.instance.shipment = datetime.datetime.now()
+        form.save()
+
+        car = get_object_or_404(
+            Support,
+            id=self.kwargs.get("id")
+        )
+        dealership = car.dealership
+        dealership.profit += form.instance.price
+        dealership.save()
+        return redirect("get_support", id=dealership.id)

@@ -1,60 +1,66 @@
 from django.urls import path
 
-from .views import (get_cars, get_component, get_support, get_transactions,
-                    index, new_cars, new_component, new_dealer, new_dealership,
-                    new_support, new_transaction, shipment_car)
+from .views import (CarsView, ComponentView, CreateCarView,
+                    CreateComponentView, CreateDealershipView,
+                    CreateDealerView, CreateShipmentView, CreateSupportView,
+                    CreateTransactionView, IndexView, SupportView,
+                    TransactionsView)
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('new_dealer/', new_dealer, name="new_dealer"),
-    path('new_dealership/', new_dealership, name="create_dealership"),
+    path('', IndexView.as_view(), name='index'),
+    path('new_dealer/', CreateDealerView.as_view(), name="new_dealer"),
+    path(
+        'new_dealership/',
+        CreateDealershipView.as_view(),
+        name="create_dealership"
+        ),
     # Transactions
     path(
         'dealership/<int:id>/transactions/',
-        get_transactions,
+        TransactionsView.as_view(),
         name="get_transactions"
         ),
     path(
         'dealership/<int:id>/transactions/create/',
-        new_transaction, name="transaction_create"
+        CreateTransactionView.as_view(), name="transaction_create"
         ),
     # Components
     path(
         'dealership/<int:id>/components/',
-        get_component,
+        ComponentView.as_view(),
         name="dealership_components"
         ),
     path(
         'dealership/<int:id>/components/create/',
-        new_component,
+        CreateComponentView.as_view(),
         name="component_create"
         ),
     # Cars
     path(
         'dealership/<int:id>/cars/',
-        get_cars,
+        CarsView.as_view(),
         name="dealership_cars"
         ),
     path(
         'dealership/<int:id>/cars/create/',
-        new_cars,
+        CreateCarView.as_view(),
         name="cars_create"
         ),
 
     # Support
     path(
         'dealership/<int:id>/support/',
-        get_support,
+        SupportView.as_view(),
         name="get_support"
         ),
     path(
         'dealership/<int:id>/support/create/',
-        new_support,
+        CreateSupportView.as_view(),
         name="new_support"
         ),
     path(
         'dealership/<int:id>/support/shipment/',
-        shipment_car,
+        CreateShipmentView.as_view(),
         name="shipment_car"
         ),
 ]
